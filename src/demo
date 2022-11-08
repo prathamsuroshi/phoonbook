@@ -1,0 +1,93 @@
+import './App.css';
+import React, { useState } from "react";
+import Data from "./phone-book-data.json";
+import {nanoid} from "nanoid";
+
+const App = () => {
+
+  const [contacts, setContact] = useState(Data);
+  const [formData , setFormData] = useState({
+    fullName: "",
+    address : "",
+    phoneNumber : "",
+    email : "",
+  });
+
+  const handleaddformmchange = (event) =>{
+    event.preventDefault();
+
+    const fieldname = event.target.getAttribute("name");
+    const fieldvalue = event.target.value;
+
+    const newformdata = { ...formData};
+    newformdata[fieldname] = fieldvalue;
+
+    setFormData(newformdata);
+  };
+
+  const handleaddfromsubmit = (event) =>{
+    event.preventDefault();
+
+    const adddata = {
+      id : nanoid(),
+      fullName : formData.fullName,
+      address : formData.address,
+      phoneNumber : formData.phoneNumber,
+      email : formData.email,
+    };
+
+    const newcontact = [...contacts, adddata];
+    setContact(newcontact);
+
+  };
+
+  const handleDeleteClick = (contactId) => {
+    const newContacts = [...contacts];
+
+    const index = contacts.findIndex((contact) => contact.id === contactId);
+
+    newContacts.splice(index, 1);
+    setContact(newContacts);
+  };
+
+  
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+          <td>Name</td>
+          <td>Address</td>
+          <td>Phone Number</td>
+          <td>Email</td>
+          <td>Action</td>
+          </tr>
+        </thead>
+        <tbody>
+          {contacts.map((contact) => <tr>
+            <td>{contact.fullName}</td>
+            <td>{contact.address}</td>
+            <td>{contact.phoneNumber}</td>
+            <td>{contact.email}</td>
+            <td><button onClick={() => handleDeleteClick(contact.id)}>delete</button></td>
+          </tr>
+          )}
+        </tbody>
+      </table>
+<hr/>
+      <h2>Add your Data</h2>
+      <form onSubmit={handleaddfromsubmit}>
+      <input type="text" name="fullName" required="required" placeholder='Enter your name...'  onChange={handleaddformmchange}></input>
+      <input type="text" name="address" required="required" placeholder='Enter your Address...' onChange={handleaddformmchange}></input>
+      <input type="text" name="phoneNumber" required="required" placeholder='Enter your phone number...' onChange={handleaddformmchange}></input>
+      <input type="text" name="email" required="required" placeholder='Enter your email...' onChange={handleaddformmchange}></input>
+      <button type="submit">Add</button>
+      </form>
+    </div>
+
+
+  );
+}
+
+export default App;
